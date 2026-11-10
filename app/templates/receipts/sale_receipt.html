@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reçu de vente - {{ receipt_number }}</title>
+    <style>
+        /* Styles pour le reçu */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'DejaVu Sans', Arial, sans-serif;
+            font-size: 12px;
+            line-height: 1.4;
+            color: #333;
+            padding: 10px;
+        }
+        
+        .receipt-container {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #000;
+        }
+        
+        .company-name {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .company-address {
+            font-size: 11px;
+            margin-bottom: 3px;
+        }
+        
+        .receipt-info {
+            margin-bottom: 15px;
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+        
+        .info-label {
+            font-weight: bold;
+        }
+        
+        .customer-section {
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+        }
+        
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+        
+        .items-table th {
+            background-color: #333;
+            color: white;
+            padding: 8px 5px;
+            text-align: left;
+            font-size: 11px;
+        }
+        
+        .items-table td {
+            padding: 6px 5px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .items-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .text-right {
+            text-align: right;
+        }
+        
+        .text-center {
+            text-align: center;
+        }
+        
+        .totals-section {
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 2px solid #000;
+        }
+        
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            padding: 3px 0;
+        }
+        
+        .total-label {
+            font-weight: bold;
+        }
+        
+        .grand-total {
+            font-size: 16px;
+            font-weight: bold;
+            color: #000;
+            padding-top: 8px;
+            border-top: 2px solid #000;
+        }
+        
+        .payment-info {
+            margin: 15px 0;
+            padding: 10px;
+            background-color: #f0f8ff;
+            border-radius: 5px;
+        }
+        
+        .footer {
+            margin-top: 20px;
+            padding-top: 10px;
+            border-top: 1px dashed #999;
+            font-size: 10px;
+            text-align: center;
+            color: #666;
+        }
+        
+        .signature {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #000;
+            text-align: center;
+        }
+        
+        .signature-line {
+            display: inline-block;
+            width: 200px;
+            border-top: 1px solid #000;
+            margin-top: 20px;
+        }
+        
+        .barcode {
+            text-align: center;
+            margin: 10px 0;
+            font-family: monospace;
+        }
+        
+        .warning {
+            color: #d9534f;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+        
+        .notes {
+            margin: 10px 0;
+            padding: 8px;
+            background-color: #fff8e1;
+            border-left: 3px solid #ffc107;
+            font-size: 11px;
+        }
+    </style>
+</head>
+<body>
+    <div class="receipt-container">
+        <!-- En-tête de l'entreprise -->
+        <div class="header">
+            <div class="company-name">{{ company.name }}</div>
+            <div class="company-address">{{ company.address }}</div>
+            <div class="company-address">Tél: {{ company.phone }} | Email: {{ company.email }}</div>
+            {% if company.rc %}
+            <div class="company-address">RC: {{ company.rc }} | NIF: {{ company.nif }} | STAT: {{ company.stat }}</div>
+            {% endif %}
+        </div>
+        
+        <!-- Informations du reçu -->
+        <div class="receipt-info">
+            <div class="info-row">
+                <span class="info-label">REÇU N°:</span>
+                <span>{{ receipt_number }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Date:</span>
+                <span>{{ date }}</span>
+            </div>
+            {% if invoice_number %}
+            <div class="info-row">
+                <span class="info-label">Facture N°:</span>
+                <span>{{ invoice_number }}</span>
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- Informations client -->
+        <div class="customer-section">
+            <div class="info-row">
+                <span class="info-label">CLIENT:</span>
+                <span>{{ customer.name }}</span>
+            </div>
+            {% if customer.phone != 'N/A' %}
+            <div class="info-row">
+                <span class="info-label">Téléphone:</span>
+                <span>{{ customer.phone }}</span>
+            </div>
+            {% endif %}
+            {% if customer.address != 'N/A' %}
+            <div class="info-row">
+                <span class="info-label">Adresse:</span>
+                <span>{{ customer.address }}</span>
+            </div>
+            {% endif %}
+            <div class="info-row">
+                <span class="info-label">VENDEUR:</span>
+                <span>{{ seller }}</span>
+            </div>
+        </div>
+        
+        <!-- Code-barres simulé -->
+        <div class="barcode">
+            *{{ receipt_number }}*
+        </div>
+        
+        <!-- Tableau des articles -->
+        <table class="items-table">
+            <thead>
+                <tr>
+                    <th>Code</th>
+                    <th>Désignation</th>
+                    <th class="text-right">Qté</th>
+                    <th class="text-right">P.U</th>
+                    <th class="text-right">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <td>{{ item.code }}</td>
+                    <td>{{ item.name }}</td>
+                    <td class="text-right">{{ item.quantity }}</td>
+                    <td class="text-right">{{ item.unit_price }}</td>
+                    <td class="text-right">{{ item.total }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <!-- Totaux -->
+        <div class="totals-section">
+            <div class="total-row">
+                <span class="total-label">Sous-total:</span>
+                <span>{{ totals.subtotal }}</span>
+            </div>
+            
+            {% if totals.discount != '0,00' %}
+            <div class="total-row">
+                <span class="total-label">Remise:</span>
+                <span>-{{ totals.discount }}</span>
+            </div>
+            {% endif %}
+            
+            {% if totals.tva != '0,00' %}
+            <div class="total-row">
+                <span class="total-label">TVA:</span>
+                <span>{{ totals.tva }}</span>
+            </div>
+            {% endif %}
+            
+            <div class="total-row grand-total">
+                <span>TOTAL TTC:</span>
+                <span>{{ totals.total }}</span>
+            </div>
+        </div>
+        
+        <!-- Informations de paiement -->
+        <div class="payment-info">
+            <div class="info-row">
+                <span class="info-label">Mode de paiement:</span>
+                <span>{{ payment_method }}</span>
+            </div>
+            {% if payment_reference != 'N/A' %}
+            <div class="info-row">
+                <span class="info-label">Référence:</span>
+                <span>{{ payment_reference }}</span>
+            </div>
+            {% endif %}
+            
+            <div class="info-row">
+                <span class="info-label">Montant payé:</span>
+                <span>{{ amount_paid }}</span>
+            </div>
+            
+            {% if amount_due != '0,00' %}
+            <div class="info-row">
+                <span class="info-label">Reste à payer:</span>
+                <span class="warning">{{ amount_due }}</span>
+            </div>
+            {% endif %}
+            
+            {% if is_credit %}
+            <div class="warning">
+                ⚠ VENTE À CRÉDIT
+            </div>
+            <div class="info-row">
+                <span class="info-label">Échéance:</span>
+                <span>{{ credit_due_date }}</span>
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- Notes -->
+        {% if notes %}
+        <div class="notes">
+            <strong>Notes:</strong> {{ notes }}
+        </div>
+        {% endif %}
+        
+        <!-- Signature -->
+        <div class="signature">
+            <div>Signature et cachet</div>
+            <div class="signature-line"></div>
+        </div>
+        
+        <!-- Pied de page -->
+        <div class="footer">
+            <div>{{ footer_text }}</div>
+            <div style="margin-top: 10px;">
+                Document généré automatiquement<br>
+                Le {{ date }} par {{ seller }}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

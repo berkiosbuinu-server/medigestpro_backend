@@ -1,0 +1,40 @@
+services:
+  # Base de données PostgreSQL
+  db:
+    image: postgres:15-alpine
+    container_name: pharma_db
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: pharma_password_secure
+      POSTGRES_DB: pharmasaas_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  # Backend FastAPI
+  backend:
+    build: ./pharma-backend
+    container_name: pharma_api
+    restart: always
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgresql://admin:pharma_password_secure@db:5432/pharmasaas_db
+      SECRET_KEY: your_super_secret_key_for_jwt
+    ports:
+      - "8000:8000"
+
+  # Frontend React
+  frontend:
+    build: ./pharma-frontend
+    container_name: pharma_ui
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:

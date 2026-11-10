@@ -1,0 +1,36 @@
+fastapi
+uvicorn
+sqlalchemy
+psycopg2-binary
+pydantic
+pydantic-settings
+python-jose
+python-dotenv
+
+# Sécurité (versions fixées)
+passlib[bcrypt]==1.7.4
+bcrypt==4.1.3
+email-validator
+
+# Serveur prod
+gunicorn
+
+# Cache / monitoring
+redis
+prometheus_client
+aioredis
+
+# Notifications
+twilio
+termii
+
+# Génération documents
+weasyprint
+reportlab
+jinja2
+openpyxl
+pandas
+pytz
+python-multipart
+cryptography
+cachetools
