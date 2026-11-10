@@ -413,7 +413,7 @@ async def log_registered_routes():
             logger.info(f"   {methods:<30} {route.path}")  # type: ignore
 
 # Supprimer la déclaration dupliquée de logger
-logger.info(f"SECRET_KEY utilisée: {settings.SECRET_KEY[:10]}...")
+# La clé JWT ne doit jamais être journalisée.
 
 if __name__ == "__main__":
     import uvicorn

@@ -1970,7 +1970,7 @@ def super_admin_login(data: dict, db: Session = Depends(get_db)):
 async def setup_super_admin(data: SuperAdminSetup, db: Session = Depends(get_db)):
     """Crée le premier super administrateur (nécessite une clé d'installation)"""
     master_key = os.getenv("INITIAL_SETUP_KEY")
-    logger.info(f"Tentative création super admin - Setup key fournie: {data.setup_key[:5]}...")
+    logger.info("Tentative de création du premier super administrateur.")
     
     if not master_key:
         logger.error("INITIAL_SETUP_KEY non configurée")
@@ -1980,7 +1980,7 @@ async def setup_super_admin(data: SuperAdminSetup, db: Session = Depends(get_db)
         )
     
     if data.setup_key != master_key:
-        logger.warning(f"Clé d'installation invalide: {data.setup_key[:5]}... vs {master_key[:5]}...")
+        logger.warning("Tentative avec une clé d’installation invalide.")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, 
             detail="Clé d'installation invalide."

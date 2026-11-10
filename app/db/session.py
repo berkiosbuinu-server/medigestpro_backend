@@ -31,9 +31,17 @@ def _get_database_url() -> str:
             "(Render > Service > Environment) ou dans un fichier .env en local."
         )
 
-    # Render fournit souvent: postgresql://...
-    # SQLAlchemy (sync) marche très bien avec: postgresql+psycopg2://...
-    if url.startswith("postgresql://"):
+    # Normaliser les URL PostgreSQL vers le pilote synchrone psycopg2.
+    # Les URL postgres:// sont notamment utilisées par certains hébergeurs.
+    if url.startswith("postgres://"):
+        url = url.replace("postgres://", "postgresql+psycopg2://", 1)
+    elif url.startswith("postgresql+psycopg://"):
+        url = url.replace(
+            "postgresql+psycopg://",
+            "postgresql+psycopg2://",
+            1,
+        )
+    elif url.startswith("postgresql://"):
         url = url.replace("postgresql://", "postgresql+psycopg2://", 1)
 
     return url
